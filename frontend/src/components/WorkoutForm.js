@@ -9,8 +9,13 @@ const WorkoutForm = () => {
   const [title, setTitle] = useState("");
   const [load, setLoad] = useState("");
   const [reps, setReps] = useState("");
+  const [picture, setPicture] = useState(null);
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
+
+  const handleFileChange = (event) => {
+    setPicture(event.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,13 +25,16 @@ const WorkoutForm = () => {
       return;
     }
 
-    const workout = { title, load, reps };
-
+    // const workout = { title, load, reps, picture };
+    const formdata = new FormData();
+    formdata.append("picture", picture);
+    formdata.append("load", load);
+    formdata.append("reps", reps);
+    formdata.append("title", title);
     const response = await fetch("/api/workouts", {
       method: "POST",
-      body: JSON.stringify(workout),
+      body: formdata,
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${user.token}`,
       },
     });
@@ -40,6 +48,7 @@ const WorkoutForm = () => {
       setTitle("");
       setLoad("");
       setReps("");
+      setPicture(null);
       setError(null);
       setEmptyFields([]);
       dispatch({ type: "CREATE_WORKOUT", payload: json });
@@ -55,7 +64,7 @@ const WorkoutForm = () => {
         type="text"
         onChange={(e) => setTitle(e.target.value)}
         value={title}
-        className={emptyFields.includes("title") ? "error" : ""}
+        // className={emptyFields.includes("title") ? "error" : ""}
       />
 
       <label>Load (in kg):</label>
@@ -63,7 +72,7 @@ const WorkoutForm = () => {
         type="number"
         onChange={(e) => setLoad(e.target.value)}
         value={load}
-        className={emptyFields.includes("load") ? "error" : ""}
+        // className={emptyFields.includes("load") ? "error" : ""}
       />
 
       <label>Reps:</label>
@@ -71,8 +80,10 @@ const WorkoutForm = () => {
         type="number"
         onChange={(e) => setReps(e.target.value)}
         value={reps}
-        className={emptyFields.includes("reps") ? "error" : ""}
+        // className={emptyFields.includes("reps") ? "error" : ""}
       />
+      <label>Select a file:</label>
+      <input type="file" onChange={handleFileChange} accept="image/*" />
 
       <button>Add Workout</button>
       {error && <div className="error">{error}</div>}

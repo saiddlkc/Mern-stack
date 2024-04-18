@@ -128,3 +128,8 @@ form.signup, form.login {
   background: #fff;
   border-radius: 4px;
 }
+img{
+  width: 40%;
+  height: 300px;
+  
+}
